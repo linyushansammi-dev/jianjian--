@@ -369,8 +369,57 @@ function estimateMealCalories(text){
   return Math.round(total);
 }
 
+
+function menuTotalCalories(menu){
+  if(!menu || !Array.isArray(menu.meals)) return 0;
+  return Math.round(
+    menu.meals.reduce((total, meal) => total + (Number(meal.kcal) || 0), 0)
+  );
+}
+
+function renderCalorieProgress(menu = ensureMenu(dateKey())){
+  const current = menuTotalCalories(menu);
+  const target = Math.max(1, Number(menu.calories) || 1700);
+  const percent = Math.min(100, Math.round(current / target * 100));
+  const difference = target - current;
+
+  const currentEl = document.getElementById("calorieCurrent");
+  const targetEl = document.getElementById("calorieTarget");
+  const barEl = document.getElementById("calorieBar");
+  const statusEl = document.getElementById("calorieStatus");
+  const remainingEl = document.getElementById("calorieRemaining");
+  const cardEl = document.querySelector(".calorie-progress-card");
+
+  if(currentEl) currentEl.textContent = current;
+  if(targetEl) targetEl.textContent = target;
+  if(barEl) barEl.style.width = `${percent}%`;
+
+  if(cardEl){
+    cardEl.classList.toggle("calorie-over", current > target);
+    cardEl.classList.toggle("calorie-complete", current > 0 && current <= target);
+  }
+
+  if(current === 0){
+    if(statusEl) statusEl.textContent = "尚未記錄";
+    if(remainingEl) remainingEl.textContent = "今日尚未記錄餐點熱量。";
+    return;
+  }
+
+  if(difference > 0){
+    if(statusEl) statusEl.textContent = `${percent}%`;
+    if(remainingEl) remainingEl.textContent = `今天還可攝取約 ${difference} kcal。`;
+  }else if(difference === 0){
+    if(statusEl) statusEl.textContent = "剛好達標";
+    if(remainingEl) remainingEl.textContent = "今天剛好達到熱量目標。";
+  }else{
+    if(statusEl) statusEl.textContent = `超過 ${Math.abs(difference)} kcal`;
+    if(remainingEl) remainingEl.textContent = `今天已超過目標約 ${Math.abs(difference)} kcal。`;
+  }
+}
+
 function renderHomeMenuSummary(){
   const menu=ensureMenu(dateKey());
+  renderCalorieProgress(menu);
   $("#menuCalories").textContent=menu.calories;
   $("#menuProtein").textContent=menu.protein;
   $("#menuSummary").innerHTML=menu.meals.map(meal=>`
@@ -429,6 +478,7 @@ async function saveCurrentMenu(){
   }
 
   setMenuUnsaved(false);
+  if(menuPreviewKey === dateKey()) renderCalorieProgress(menu);
   alert(`${menuPreviewKey} 菜單已儲存。`);
 }
 

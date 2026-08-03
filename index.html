@@ -11,7 +11,7 @@
   <link rel="manifest" href="./manifest.json">
   <link rel="apple-touch-icon" href="./icon-192.png">
   <link rel="icon" href="./icon-192.png">
-  <link rel="stylesheet" href="./style.css?v=stable-1">
+  <link rel="stylesheet" href="./style.css?v=1172?v=stable-1">
   <title>健健健身 JianJian Stable</title>
 </head>
 <body>
@@ -128,6 +128,26 @@
           </div>
         </article>
       </div>
+
+      <article class="card calorie-progress-card">
+        <div class="between">
+          <div>
+            <div class="eyebrow">🔥 今日熱量</div>
+            <div class="calorie-progress-value">
+              <span id="calorieCurrent">0</span>
+              <span class="muted"> / </span>
+              <span id="calorieTarget">1700</span>
+              <span class="muted"> kcal</span>
+            </div>
+          </div>
+          <span class="pill" id="calorieStatus">尚未記錄</span>
+        </div>
+        <div class="bar calorie-progress-bar">
+          <div id="calorieBar"></div>
+        </div>
+        <p class="calorie-remaining-text" id="calorieRemaining">今日尚未記錄餐點熱量。</p>
+        <p class="muted calorie-source-note">依今天菜單中各餐的「估計熱量」自動加總。</p>
+      </article>
 
       <div class="section-title">
         <h2>今日營養目標</h2>

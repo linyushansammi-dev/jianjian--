@@ -10,3 +10,14 @@
 
 建議建立新的 GitHub Repository，例如 jianjian-stable，將本 ZIP 內所有檔案一次上傳至根目錄。
 GitHub Pages 設定：Deploy from a branch / main / (root)。
+
+
+Stable Calorie Progress：
+- 首頁新增今日熱量進度條。
+- 目前熱量由當天菜單各餐的估計熱量自動加總。
+- 使用菜單頁修改餐點與熱量後，首頁立即重新計算。
+- 按儲存後保留本機與 Firestore 菜單資料。
+- 顯示剩餘熱量、剛好達標或超過熱量。
+- 超過目標時進度條及提示改為紅色。
+- 僅修改熱量顯示，不變更登入、好友、訓練或其他架構。
+- app.js / style.css 快取參數為 1172。

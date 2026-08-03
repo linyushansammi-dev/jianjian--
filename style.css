@@ -280,3 +280,51 @@ main > section.page.active{
 @media(max-width:560px){.set{grid-template-columns:28px 24px 1fr 1fr}.set-rpe{grid-column:3/5}}
 
 #saveMenuBtn.unsaved{background:#d88a24;color:#fff}
+
+
+/* Stable calorie progress */
+.calorie-progress-card{
+  margin-bottom:16px;
+  background:linear-gradient(145deg,#fffdf7,#fff5d7);
+  border:1px solid rgba(214,163,42,.18);
+}
+.calorie-progress-value{
+  margin-top:4px;
+  font-size:26px;
+  line-height:1.15;
+  font-weight:900;
+  color:var(--blue);
+}
+.calorie-progress-bar{
+  height:12px;
+  margin-top:14px;
+}
+#calorieBar{
+  width:0;
+  height:100%;
+  border-radius:999px;
+  background:#e3bb3e;
+  transition:width .25s ease;
+}
+.calorie-remaining-text{
+  margin:11px 0 0;
+  font-weight:800;
+  color:var(--blue);
+}
+.calorie-source-note{
+  margin:5px 0 0;
+}
+.calorie-progress-card.calorie-complete #calorieBar{
+  background:#65a977;
+}
+.calorie-progress-card.calorie-over{
+  background:linear-gradient(145deg,#fff,#fff0ef);
+  border-color:rgba(181,68,61,.22);
+}
+.calorie-progress-card.calorie-over #calorieBar{
+  background:#c8564e;
+}
+.calorie-progress-card.calorie-over .calorie-remaining-text,
+.calorie-progress-card.calorie-over #calorieStatus{
+  color:#a63e38;
+}
