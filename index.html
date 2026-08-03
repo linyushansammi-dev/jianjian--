@@ -1,0 +1,553 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#dff2ff">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="JianJian">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="apple-touch-icon" href="./icon-192.png">
+  <link rel="icon" href="./icon-192.png">
+  <link rel="stylesheet" href="./style.css?v=stable-1">
+  <title>健健健身 JianJian Stable</title>
+</head>
+<body>
+<div class="shell">
+  <header class="topbar">
+    <button class="menu-button" id="menuButton" aria-label="開啟主選單" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <div>
+      <div class="brand">健健健身</div>
+      <div class="subbrand">JianJian Stable</div>
+      <div class="muted" id="todayText"></div>
+    </div>
+    <div id="authBox"><button class="primary" id="loginBtn">Google 登入</button></div>
+  </header>
+
+  <main>
+    <section class="page active" id="homePage">
+      <article class="card hero">
+        <div class="between">
+          <div>
+            <div class="eyebrow">今日課表</div>
+            <h1 id="todayWorkoutTitle">讀取中</h1>
+            <p id="todayWorkoutNote" class="muted"></p>
+          </div>
+          <button class="soft" data-nav="workoutPage">開始訓練</button>
+        </div>
+        <div class="bar"><div id="todayWorkoutBar"></div></div>
+        <p class="muted" id="syncStatus">資料先儲存在這台裝置。</p>
+      </article>
+
+      <div class="grid2">
+        <article class="card tint-yellow">
+          <div class="eyebrow">今日任務</div>
+          <div class="big" id="taskPercent">0%</div>
+          <div class="bar"><div id="taskBar"></div></div>
+        </article>
+        <article class="card tint-beige">
+          <div class="eyebrow">今日訓練</div>
+          <div class="big" id="workoutPercent">0%</div>
+          <p class="muted" id="workoutState">尚未開始</p>
+        </article>
+      </div>
+
+
+      <article class="card ai-coach-card">
+        <div class="between">
+          <div>
+            <div class="eyebrow">今日建議</div>
+            <div class="medium" id="aiCoachTitle">正在分析</div>
+          </div>
+          <span class="pill">Jian Coach</span>
+        </div>
+        <p id="aiCoachText" class="ai-coach-text"></p>
+      </article>
+
+      
+      <div class="section-title">
+        <div>
+          <h2>今日目標</h2>
+          <p class="muted">輸入這次新增的數量，再按「加入」。</p>
+        </div>
+      </div>
+
+      <div class="daily-goal-grid">
+        <article class="card daily-goal-card">
+          <div class="between">
+            <span>💧 喝水</span>
+            <b><span id="waterCurrent">0</span> / <span id="waterTarget">2500</span> ml</b>
+          </div>
+          <div class="bar"><div id="waterBar"></div></div>
+          <div class="metric-entry">
+            <input id="waterCustomInput" type="number" min="1" inputmode="decimal" placeholder="輸入 ml">
+            <button class="soft add-custom-metric" data-input-id="waterCustomInput" data-metric-name="water">加入</button>
+          </div>
+          <button class="quick-add-full" data-metric="water" data-add="250">快速＋250 ml</button>
+        </article>
+
+        <article class="card daily-goal-card">
+          <div class="between">
+            <span>🥚 蛋白質</span>
+            <b><span id="proteinCurrent">0</span> / <span id="proteinTarget">125</span> g</b>
+          </div>
+          <div class="bar"><div id="proteinBar"></div></div>
+          <div class="metric-entry">
+            <input id="proteinCustomInput" type="number" min="1" inputmode="decimal" placeholder="輸入 g">
+            <button class="soft add-custom-metric" data-input-id="proteinCustomInput" data-metric-name="protein">加入</button>
+          </div>
+          <button class="quick-add-full" data-metric="protein" data-add="10">快速＋10 g</button>
+        </article>
+
+        <article class="card daily-goal-card">
+          <div class="between">
+            <span>🚶 步數</span>
+            <b><span id="stepsCurrent">0</span> / <span id="stepsTarget">9000</span></b>
+          </div>
+          <div class="bar"><div id="stepsBar"></div></div>
+          <div class="metric-entry">
+            <input id="stepsCustomInput" type="number" min="1" inputmode="numeric" placeholder="輸入步數">
+            <button class="soft add-custom-metric" data-input-id="stepsCustomInput" data-metric-name="steps">加入</button>
+          </div>
+          <button class="quick-add-full" data-metric="steps" data-add="1000">快速＋1000 步</button>
+        </article>
+
+        <article class="card daily-goal-card">
+          <div class="between">
+            <span>😴 睡眠</span>
+            <b><span id="sleepCurrent">0</span> / <span id="sleepTarget">7.5</span> hr</b>
+          </div>
+          <div class="bar"><div id="sleepBar"></div></div>
+          <div class="metric-entry">
+            <input id="sleepCustomInput" type="number" min="0" max="24" step="0.5" inputmode="decimal" placeholder="輸入小時">
+            <button class="soft" id="setSleepBtn">儲存</button>
+          </div>
+        </article>
+      </div>
+
+      <div class="section-title">
+        <h2>今日營養目標</h2>
+      </div>
+      <div class="grid2 home-menu-targets">
+        <article class="card tint-yellow">
+          <div class="eyebrow">熱量目標</div>
+          <div class="big"><span id="menuCalories">0</span> kcal</div>
+        </article>
+        <article class="card tint-beige">
+          <div class="eyebrow">蛋白質目標</div>
+          <div class="big"><span id="menuProtein">0</span> g</div>
+        </article>
+      </div>
+
+<div class="section-title"><h2>本週摘要</h2><button class="soft" data-nav="recordsPage">查看紀錄</button></div>
+      <div class="grid3 home-stats">
+        <article class="card"><div class="eyebrow">本週完成</div><div class="big" id="weekCompleted">0</div><p class="muted">次訓練</p></article>
+        <article class="card"><div class="eyebrow">連續紀錄</div><div class="big" id="currentStreak">0</div><p class="muted">天</p></article>
+        <article class="card"><div class="eyebrow">本月 PR</div><div class="big" id="monthPRCount">0</div><p class="muted">個動作</p></article>
+      </div>
+
+      <article class="card" id="cycleCard" hidden>
+        <div class="between">
+          <div><div class="eyebrow">生理週期</div><div class="medium" id="cycleTitle"></div><p class="muted" id="cycleAdvice"></p></div>
+          <button class="soft" data-nav="profilePage">設定</button>
+        </div>
+      </article>
+
+      <div class="section-title"><h2>今日菜單</h2><button class="soft" data-nav="menuPage">完整菜單</button></div>
+      <article class="card" id="menuSummary"></article>
+
+      <div class="section-title"><h2>今日任務</h2><button class="soft" id="addTaskBtn">新增</button></div>
+      <article class="card" id="taskList"></article>
+    </section>
+
+    <section class="page" id="workoutPage">
+      <div class="section-title">
+        <div><h2 id="workoutPageTitle">今日訓練</h2><p class="muted">暖身 → 主訓練 → 拉伸</p></div>
+        <div class="workout-add-actions">
+          <button class="soft" id="addExerciseBtn">＋從動作庫</button>
+          <button class="soft" id="addCustomExerciseBtn">＋自訂動作</button>
+        </div>
+      </div>
+
+      <article class="card phase">
+        <div class="between">
+          <div><h3>練前暖身</h3><span class="muted">可修改或刪除預設項目</span></div>
+          <button class="tiny" id="addWarmupBtn">＋新增暖身</button>
+        </div>
+        <div id="warmupList"></div>
+      </article>
+
+      <article class="card phase">
+        <div class="between"><h3>練前可補充食物</h3><button class="tiny" id="foodTimingBtn">調整時間</button></div>
+        <div id="preFoodList"></div>
+      </article>
+
+      <div id="exerciseList"></div>
+
+      <article class="card phase">
+        <div class="between">
+          <div><h3>練後拉伸</h3><span class="muted">可修改或刪除預設項目</span></div>
+          <button class="tiny" id="addStretchBtn">＋新增拉伸</button>
+        </div>
+        <div id="stretchList"></div>
+      </article>
+
+      <button class="primary full" id="finishWorkoutBtn">完成今日訓練</button>
+    </section>
+
+
+    <section class="page" id="exerciseLibraryPage">
+      <div class="section-title">
+        <div><h2>動作資料庫</h2><p class="muted">搜尋、查看要點，或加入今日訓練。</p></div>
+        <span class="pill" id="exerciseLibraryCount">0 個動作</span>
+      </div>
+      <article class="card">
+        <div class="library-search-row">
+          <input id="exerciseSearch" placeholder="搜尋動作、肌群或器材">
+          <button class="soft" id="clearExerciseSearchBtn">清除</button>
+        </div>
+        <div class="library-filters" id="exerciseCategoryFilter"></div><label class="checkline"><input type="checkbox" id="favoritesOnly">只看收藏</label>
+      </article>
+      <div id="exerciseLibraryList"></div>
+    </section>
+
+    <section class="page" id="calendarPage">
+      <div class="section-title">
+        <div><h2>課表預覽</h2><p class="muted">預覽不會更動今日打卡。</p></div>
+        <button class="soft" id="todayPreviewBtn">回到今天</button>
+      </div>
+      <article class="card">
+        <div class="date-controls">
+          <button class="tiny" id="prevDateBtn">← 前一天</button>
+          <input id="previewDate" type="date">
+          <button class="tiny" id="nextDateBtn">後一天 →</button>
+        </div>
+      </article>
+      <article class="card">
+        <div class="eyebrow">預覽日期</div>
+        <div class="medium" id="previewTitle"></div>
+        <p class="muted" id="previewNote"></p>
+      </article>
+      <div id="previewExercises"></div>
+      <div class="section-title">
+        <div><h2>每週安排</h2><p class="muted">可修改每天名稱與訓練動作。</p></div>
+        <button class="soft" id="editWeeklyPlanBtn">編輯課表</button>
+      </div>
+      <article class="card" id="weeklyPlan"></article>
+
+      <article class="card" id="weeklyPlanEditor" hidden>
+        <div class="between">
+          <div>
+            <h3>自訂每週課表</h3>
+            <p class="muted">每行輸入一個動作；可使用動作庫名稱或自訂名稱。</p>
+          </div>
+          <button class="tiny" id="cancelWeeklyPlanEditBtn">取消</button>
+        </div>
+        <div id="weeklyPlanEditorDays"></div>
+        <button class="primary full" id="saveWeeklyPlanBtn">儲存並重新產生推薦</button>
+      </article>
+
+      <article class="card" id="planRecommendationsCard" hidden>
+        <h3>依課表產生的推薦</h3>
+        <div id="planRecommendations"></div>
+      </article>
+    </section>
+
+    <section class="page" id="cardioPage">
+      <div class="section-title"><div><h2>有氧中心</h2><p class="muted">跑步機、橢圓機、飛輪等紀錄。</p></div></div>
+      <article class="card">
+        <label>器材<select id="cardioType">
+          <option value="treadmill">跑步機</option><option value="elliptical">橢圓機</option>
+          <option value="bike">飛輪</option><option value="rower">划船機</option>
+          <option value="stair">登階機</option><option value="outdoor">戶外跑／快走</option>
+        </select></label>
+        <div class="grid2">
+          <label data-cardio="speed">速度 km/h<input id="cardioSpeed" type="number" step="0.1"></label>
+          <label data-cardio="incline">坡度 %<input id="cardioIncline" type="number" step="0.5"></label>
+          <label data-cardio="resistance">阻力<input id="cardioResistance" type="number"></label>
+          <label data-cardio="rpm">RPM<input id="cardioRpm" type="number"></label>
+          <label data-cardio="level">Level<input id="cardioLevel" type="number"></label>
+          <label>時間（分鐘）<input id="cardioMinutes" type="number"></label>
+        </div>
+        <label>備註<input id="cardioNote" placeholder="Zone 2、高坡度快走等"></label>
+        <div class="tip" id="cardioTip"></div>
+        <button class="primary full" id="saveCardioBtn">儲存有氧</button>
+      </article>
+      <h2>今日紀錄</h2>
+      <div id="cardioList"></div>
+    </section>
+
+    
+    <section class="page" id="menuPage">
+      <div class="section-title">
+        <div>
+          <h2>每日菜單</h2>
+          <p class="muted" id="menuTypeText"></p>
+          <p class="muted">可把建議菜單改成實際吃的內容，系統會自動估算大約熱量。</p>
+        </div>
+        <button class="soft" id="resetMenuBtn">恢復建議</button>
+      </div>
+
+      <article class="card menu-preview-controls">
+        <div class="date-controls">
+          <button class="tiny" id="prevMenuDateBtn">← 前一天</button>
+          <input id="menuPreviewDate" type="date">
+          <button class="tiny" id="nextMenuDateBtn">後一天 →</button>
+        </div>
+        <button class="soft full" id="todayMenuDateBtn">回到今天</button>
+        <p class="muted" id="menuPreviewNote"></p>
+      </article>
+
+      <article class="card" id="menuPageSummary"></article>
+
+      <div id="mealList"></div>
+
+      <button class="primary full" id="saveMenuBtn">儲存此日期菜單</button>
+    </section>
+
+
+    <section class="page" id="recordsPage">
+
+      <h2>訓練與 PR 摘要</h2>
+      <div class="grid3">
+        <article class="card"><div class="eyebrow">總訓練</div><div class="big" id="totalWorkoutCount">0</div><p class="muted">次</p></article>
+        <article class="card"><div class="eyebrow">完成率</div><div class="big" id="overallCompletion">0%</div></article>
+        <article class="card"><div class="eyebrow">有紀錄動作</div><div class="big" id="trackedExerciseCount">0</div><p class="muted">個</p></article>
+      </div>
+      <article class="card">
+        <div class="between"><h3>個人最佳紀錄</h3><span class="pill">PR</span></div>
+        <div id="prSummaryList"></div>
+      </article>
+
+      <h2>體態紀錄</h2>
+      <article class="card">
+        <div class="grid2">
+          <label>體脂率 %<input id="bodyFat" type="number" step="0.1"></label>
+          <label>體重 kg<input id="bodyWeight" type="number" step="0.1"></label>
+          <label>腰圍 cm<input id="bodyWaist" type="number" step="0.1"></label>
+          <label>臀圍 cm<input id="bodyHip" type="number" step="0.1"></label>
+        </div>
+        <button class="primary full" id="saveBodyBtn">儲存今日紀錄</button>
+      </article>
+      <article class="card table-wrap"><table><thead><tr><th>日期</th><th>體脂</th><th>體重</th><th>腰</th><th>臀</th></tr></thead><tbody id="bodyTable"></tbody></table></article>
+    </section>
+
+
+    <section class="page" id="friendsPage">
+      <div class="section-title">
+        <div><h2>好友互動</h2><p class="muted">用好友代碼新增朋友並分享訓練。</p></div>
+      </div>
+
+      <article class="card">
+        <div class="between">
+          <div>
+            <div class="eyebrow">我的好友代碼</div>
+            <div class="friend-code" id="myFriendCode">登入後顯示</div>
+          </div>
+          <button class="soft" id="copyFriendCodeBtn">複製</button>
+        </div>
+      </article>
+
+      <article class="card">
+        <label>輸入好友代碼
+          <input id="friendCodeInput" placeholder="例如 ABCD1234">
+        </label>
+        <button class="primary full" id="sendFriendRequestBtn">送出好友邀請</button>
+        <p class="muted" id="friendStatus"></p>
+      </article>
+
+      <h2>收到的邀請</h2>
+      <article class="card" id="friendRequestsList"><p class="muted">登入後載入。</p></article>
+
+      <h2>好友名單</h2>
+      <article class="card" id="friendsList"><p class="muted">尚無好友。</p></article>
+
+      <h2>分享今日訓練</h2>
+      <article class="card">
+        <label>想說的話<textarea id="postText" placeholder="例如：今天臀推進步了！"></textarea></label>
+        <label class="checkline"><input type="checkbox" id="includeWorkout" checked>附上今日課表與完成率</label>
+        <label>附加相片（最多一張）
+          <input id="postPhotoInput" type="file" accept="image/*">
+        </label>
+        <div id="postPhotoPreview" class="post-photo-preview" hidden>
+          <img id="postPhotoPreviewImage" alt="貼文相片預覽">
+          <button type="button" class="tiny danger" id="removePostPhotoBtn">移除相片</button>
+        </div>
+        <button class="primary full" id="sharePostBtn">分享給好友</button>
+      </article>
+
+      
+      <h2>好友挑戰</h2>
+      <article class="card">
+        <div class="between">
+          <div>
+            <div class="eyebrow">本月挑戰</div>
+            <div class="medium">完成 20 次訓練</div>
+          </div>
+          <span class="pill" id="challengeProgressText">0 / 20</span>
+        </div>
+        <div class="bar"><div id="challengeProgressBar"></div></div>
+        <p class="muted">好友動態會顯示彼此完成訓練的進度。</p>
+      </article>
+
+<h2>好友動態</h2>
+      <div id="friendFeed"><article class="card muted">登入並新增好友後即可查看。</article></div>
+    </section>
+
+    <section class="page" id="profilePage">
+      <h2>個人設定</h2>
+      <article class="card">
+        <label>顯示名稱<input id="displayName"></label>
+        <label>性別<select id="gender"><option value="unspecified">不指定</option><option value="female">女性</option><option value="male">男性</option></select></label>
+        <label>預設加重量 kg<input id="weightIncrement" type="number" step="0.5"></label>
+        <button class="primary full" id="saveProfileBtn">儲存基本設定</button>
+      </article>
+
+      
+      <h2>女性健康／生理週期</h2>
+      <article class="card">
+        <label class="checkline">
+          <input id="cycleEnabled" type="checkbox">
+          啟用生理週期追蹤
+        </label>
+        <p class="muted">可自行開啟或關閉；未啟用時首頁不顯示週期資訊。</p>
+
+        <div id="cycleSettings">
+          <label>最近一次月經開始日期
+            <input id="lastPeriod" type="date">
+          </label>
+
+          <div class="grid2">
+            <label>平均週期天數
+              <input id="cycleLength" type="number" min="20" max="45">
+            </label>
+            <label>月經天數
+              <input id="periodLength" type="number" min="2" max="10">
+            </label>
+          </div>
+
+          <div class="between cycle-heading-row"><div><b>今日症狀</b><p class="muted">可同時選擇多個選項。</p></div><button type="button" class="tiny" id="clearSymptomsBtn">清除選擇</button></div>
+          <div class="symptoms" id="symptomBox"></div>
+
+          <label>自訂症狀</label>
+          <div class="custom-symptom-row">
+            <input id="customSymptomInput" placeholder="例如：下腹悶、想吃甜食">
+            <button type="button" class="soft" id="addCustomSymptomBtn">新增</button>
+          </div>
+          <div class="custom-symptom-list" id="customSymptomList"></div>
+
+          <button type="button" class="primary full" id="saveCycleBtn">儲存生理週期設定</button>
+        </div>
+      </article>
+
+
+      <h2>我的計畫</h2>
+      <article class="card">
+        <label>快速範本
+          <select id="personalPlanPreset">
+            <option value="gluteFatloss">臀腿優先減脂</option>
+            <option value="balancedFatloss">均衡減脂</option>
+            <option value="muscle">增肌訓練</option>
+            <option value="beginner">新手規律運動</option>
+          </select>
+        </label>
+        <div class="grid2">
+          <label>每日蛋白質 g<input id="profileProteinTarget" type="number" min="30" value="125"></label>
+          <label>每日喝水 ml<input id="profileWaterTarget" type="number" min="500" value="2500"></label>
+          <label>每日步數<input id="profileStepsTarget" type="number" min="1000" value="9000"></label>
+          <label>睡眠目標 hr<input id="profileSleepTarget" type="number" min="3" max="12" step="0.5" value="7.5"></label>
+        </div>
+        <label>AI 加重速度
+          <select id="aiIntensity">
+            <option value="conservative">保守</option>
+            <option value="normal" selected>普通</option>
+            <option value="aggressive">積極</option>
+          </select>
+        </label>
+        <button class="primary full" id="applyPersonalPlanBtn">套用計畫並重建未來課表</button>
+        <p class="muted">每位使用者都能套用自己的範本；過去訓練紀錄不會被刪除。</p>
+      </article>
+
+<h2>依目標生成課表</h2>
+      <article class="card">
+        <label>目標<select id="planGoal"><option value="fatloss">減脂</option><option value="muscle">增肌</option><option value="recomp">體態重塑</option><option value="strength">提升力量</option><option value="health">健康維持</option></select></label>
+        <div class="grid2"><label>每週天數<select id="planDays"><option>3</option><option selected>4</option><option>5</option><option>6</option></select></label><label>偏好<select id="planFocus"><option value="balanced">均衡</option><option value="glutes">臀腿優先</option><option value="upper">上半身優先</option><option value="cardio">有氧優先</option></select></label></div>
+        <button class="primary full" id="generatePlanBtn">生成並套用</button>
+      </article>
+
+      <h2>雲端同步</h2>
+      <article class="card"><div class="between"><div><b id="syncTitle">尚未登入</b><p class="muted" id="syncDetail">登入後可跨裝置同步。</p></div><button class="soft" id="syncNowBtn">立即同步</button></div></article>
+    </section>
+  </main>
+</div>
+
+
+
+<nav class="primary-bottom-nav">
+  <button class="active" data-nav="homePage"><span>⌂</span>首頁</button>
+  <button data-nav="workoutPage"><span>🏋</span>訓練</button>
+  <button data-nav="friendsPage"><span>♟</span>好友</button>
+  <button data-nav="profilePage"><span>●</span>我的</button>
+</nav>
+
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<aside class="side-drawer" id="sideDrawer" aria-hidden="true">
+  <div class="drawer-header">
+    <div>
+      <div class="drawer-brand">健健健身</div>
+      <div class="muted">JianJian 主選單</div>
+    </div>
+    <button class="drawer-close" id="drawerCloseBtn" aria-label="關閉主選單">×</button>
+  </div>
+
+  <nav class="drawer-nav">
+    <button data-nav="exerciseLibraryPage"><span>▦</span>動作庫</button>
+    <button data-nav="calendarPage"><span>▣</span>課表</button>
+    <button data-nav="cardioPage"><span>♥</span>有氧</button>
+    <button data-nav="menuPage"><span>🍽</span>菜單</button>
+    <button data-nav="recordsPage"><span>▤</span>紀錄</button>
+  </nav>
+
+  <div class="drawer-footer muted">JianJian v9.4</div>
+</aside>
+
+
+
+<div class="modal" id="customExerciseModal">
+  <div class="modal-box">
+    <div class="between">
+      <h2>新增自訂動作</h2>
+      <button class="soft" id="closeCustomExerciseBtn">關閉</button>
+    </div>
+
+    <label>動作名稱<input id="customExerciseName" placeholder="例如：Cable Kickback"></label>
+    <div class="grid2">
+      <label>分類
+        <select id="customExerciseCategory">
+          <option>臀部</option><option>腿部</option><option>胸部</option>
+          <option>背部</option><option>肩部</option><option>手臂</option>
+          <option>核心</option><option>小腿</option><option>有氧</option><option>其他</option>
+        </select>
+      </label>
+      <label>器材<input id="customExerciseEquipment" placeholder="例如：滑輪"></label>
+      <label>組數<input id="customExerciseSets" type="number" min="1" value="3"></label>
+      <label>次數<input id="customExerciseReps" type="number" min="1" value="10"></label>
+    </div>
+    <label>動作提醒<textarea id="customExerciseNotes" placeholder="可填動作要點、呼吸或注意事項"></textarea></label>
+    <label class="checkline">
+      <input id="saveCustomExerciseToLibrary" type="checkbox" checked>
+      同時永久加入我的動作庫
+    </label>
+    <button class="primary full" id="confirmCustomExerciseBtn">加入今日訓練</button>
+  </div>
+</div>
+
+<div class="modal" id="modal"><div class="modal-box"><div class="between"><h2 id="modalTitle"></h2><button class="soft" id="closeModalBtn">關閉</button></div><div id="modalContent"></div></div></div>
+
+<script type="module" src="./app.js?v=stable-1"></script>
+</body>
+</html>

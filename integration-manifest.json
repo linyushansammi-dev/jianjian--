@@ -1,0 +1,9 @@
+{
+  "name": "JianJian Stable",
+  "base": "v11.7 Runtime Fixed",
+  "change_scope": [
+    "menu save only"
+  ],
+  "firestore_menu_format": "{json: JSON.stringify(menu)}",
+  "service_worker": "unregister and clear old caches"
+}

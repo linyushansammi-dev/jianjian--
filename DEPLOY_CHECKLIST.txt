@@ -1,0 +1,18 @@
+JianJian Stable 部署檢查表
+
+1. 建立全新的 GitHub Repository：jianjian-stable
+2. 不要從舊 Repository 複製任何檔案。
+3. 解壓 ZIP，將解壓後的所有檔案一次上傳到新 Repository 根目錄。
+4. Settings → Pages：Deploy from a branch / main / (root)。
+5. 等待 Pages 顯示綠色部署成功。
+6. 開啟新網址，頁首必須顯示「JianJian Stable」。
+7. 測試首頁、訓練、好友、我的、生理週期。
+8. 菜單測試：
+   - 修改早餐文字。
+   - 修改熱量。
+   - 按「儲存此日期菜單」。
+   - 切換日期再切回來。
+   - 重新整理頁面確認仍保留。
+   - 登入後換另一裝置確認雲端資料。
+
+注意：不要把這包覆蓋到 jianjian-v13-Ultimate，避免再次混用舊檔。
