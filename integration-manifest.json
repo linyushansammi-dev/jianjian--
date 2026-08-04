@@ -1,11 +1,12 @@
 {
   "product": "JianJian Ultimate",
-  "build": 1401,
-  "base": "user-uploaded stable GIF guide edition",
+  "build": 1402,
+  "base": 1401,
   "changes": [
-    "fix favorite exercise filter undefined id",
-    "fix stylesheet cache query",
-    "add universal YouTube guide search links"
+    "goal-aware menu generation",
+    "28-day future plan and menu rebuild",
+    "refresh menu UI immediately after plan generation",
+    "fix glute preset focus"
   ],
   "data_schema_changed": false
 }

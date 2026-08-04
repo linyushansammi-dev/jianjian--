@@ -364,3 +364,9 @@ main > section.page.active{
     grid-template-columns:1fr;
   }
 }
+
+/* Ultimate Build 1402 — plan/menu synchronization */
+.plan-menu-sync-note{
+  margin:8px 2px 0;
+  line-height:1.55;
+}

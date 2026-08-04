@@ -163,7 +163,7 @@ let menuPreviewKey=dateKey();
 const PLAN_PRESETS={
   gluteFatloss:{
     goal:{title:"降低體脂",target:24,unit:"%"},
-    plan:()=>buildPlan("fatloss",5,"glute")
+    plan:()=>buildPlan("fatloss",5,"glutes")
   },
   balancedFatloss:{
     goal:{title:"均衡減脂",target:24,unit:"%"},
@@ -596,14 +596,21 @@ function applyPersonalPlan(){
   state.profile.stepsTarget=Number($("#profileStepsTarget").value)||9000;
   state.profile.sleepTarget=Number($("#profileSleepTarget").value)||7.5;
   state.profile.aiIntensity=$("#aiIntensity").value||"normal";
+  const presetGoals={
+    gluteFatloss:"fatloss",
+    balancedFatloss:"fatloss",
+    muscle:"muscle",
+    beginner:"health"
+  };
+  state.profile.goal=presetGoals[presetKey]||"recomp";
   state.goal={...state.goal,...preset.goal};
   state.weeklyPlan=preset.plan();
 
-  Object.keys(state.days).forEach(key=>{if(key>=dateKey())delete state.days[key]});
-  Object.keys(state.menus).forEach(key=>{if(key>=dateKey())delete state.menus[key]});
-  ensureDay();ensureMenu();
+  rebuildFuturePlanAndMenus(dateKey(),28);
   save();
-  alert("計畫已套用，今天與未來課表、菜單已重新建立。");
+  renderMenuPreview();
+  renderHomeMenuSummary();
+  alert("計畫已套用，今天與未來 28 天的課表、熱量與菜單已同步重建。");
   goToPage("homePage");
 }
 
@@ -612,7 +619,204 @@ async function syncCloud(show=true){if(!user){status("尚未登入","登入後�
 function status(t,d){$("#syncTitle").textContent=t;$("#syncDetail").textContent=d}
 function ensureDay(key=dateKey()){if(!state.days[key]){const tpl=state.weeklyPlan[dateFromKey(key).getDay()]||state.weeklyPlan[0];state.days[key]={title:tpl.title,note:tpl.note,status:"pending",exercises:tpl.exercises.map(makeExercise),tasks:clone(state.tasks),foodTiming:"60"}}return state.days[key]}
 function menuKind(day){return day.title.includes("休息")?"rest":day.title.includes("有氧")?"cardio":"strength"}
-function ensureMenu(key=dateKey()){if(!state.menus[key]){const t=clone(mealTemplates[menuKind(ensureDay(key))]);t.meals=t.meals.map(([name,food,kcal])=>({name,food,kcal}));state.menus[key]=t}return state.menus[key]}
+
+const GOAL_MENU_CONFIG={
+  fatloss:{
+    name:"降低體脂",
+    targets:{
+      strength:{calories:1700,protein:125},
+      cardio:{calories:1600,protein:120},
+      rest:{calories:1500,protein:120}
+    }
+  },
+  muscle:{
+    name:"增加肌肉",
+    targets:{
+      strength:{calories:2200,protein:140},
+      cardio:{calories:2050,protein:135},
+      rest:{calories:1950,protein:130}
+    }
+  },
+  recomp:{
+    name:"體態重塑",
+    targets:{
+      strength:{calories:1850,protein:130},
+      cardio:{calories:1750,protein:125},
+      rest:{calories:1650,protein:125}
+    }
+  },
+  strength:{
+    name:"提升力量",
+    targets:{
+      strength:{calories:2100,protein:140},
+      cardio:{calories:1900,protein:130},
+      rest:{calories:1800,protein:130}
+    }
+  },
+  health:{
+    name:"健康維持",
+    targets:{
+      strength:{calories:1800,protein:120},
+      cardio:{calories:1700,protein:115},
+      rest:{calories:1650,protein:115}
+    }
+  }
+};
+
+function currentGoalKey(){
+  const key=String(state.profile?.goal||"recomp");
+  return GOAL_MENU_CONFIG[key]?key:"recomp";
+}
+
+function goalMenuFoods(goal,kind){
+  const menus={
+    fatloss:{
+      strength:[
+        ["早餐","雞蛋 2 顆＋全麥吐司＋無糖豆漿＋水果",400],
+        ["午餐","雞胸／雞腿排 150 g＋白飯半碗至一碗＋兩份蔬菜",500],
+        ["練前／點心","香蕉或地瓜＋無糖優格",200],
+        ["晚餐","魚／瘦牛／豬里肌＋半碗飯＋大量蔬菜",480]
+      ],
+      cardio:[
+        ["早餐","蛋白質早餐＋無糖豆漿＋水果",370],
+        ["午餐","雞胸便當，飯量減少並增加蔬菜",470],
+        ["點心","無糖優格、茶葉蛋或毛豆",170],
+        ["晚餐","魚／豆腐／瘦肉＋蔬菜＋少量澱粉",430]
+      ],
+      rest:[
+        ["早餐","雞蛋＋無糖豆漿＋水果",350],
+        ["午餐","魚／雞肉＋半碗飯＋蔬菜",450],
+        ["點心","希臘優格、毛豆或茶葉蛋",170],
+        ["晚餐","豆腐／魚／瘦肉＋大量蔬菜",430]
+      ]
+    },
+    muscle:{
+      strength:[
+        ["早餐","燕麥＋牛奶／豆漿＋雞蛋 2 顆＋香蕉＋吐司",550],
+        ["午餐","雞腿排／牛肉 180 g＋白飯 1.5 碗＋蔬菜",700],
+        ["練前／練後","香蕉＋乳清＋優格或地瓜",350],
+        ["晚餐","鮭魚／牛肉／雞胸＋一碗飯＋蔬菜",600]
+      ],
+      cardio:[
+        ["早餐","燕麥＋雞蛋＋無糖豆漿＋香蕉",500],
+        ["午餐","雞肉／牛肉＋一碗飯＋蔬菜",620],
+        ["點心","乳清＋水果＋優格",300],
+        ["晚餐","魚／瘦肉＋一碗飯＋蔬菜",550]
+      ],
+      rest:[
+        ["早餐","雞蛋 2 顆＋燕麥＋豆漿＋水果",480],
+        ["午餐","雞肉／魚＋一碗飯＋蔬菜",600],
+        ["點心","乳清、優格或堅果",280],
+        ["晚餐","牛肉／魚／豆腐＋飯＋蔬菜",520]
+      ]
+    },
+    recomp:{
+      strength:[
+        ["早餐","燕麥＋雞蛋 2 顆＋無糖豆漿＋水果",450],
+        ["午餐","雞胸／雞腿排 150 g＋白飯一碗＋蔬菜",560],
+        ["練前／點心","香蕉＋無糖優格或乳清",230],
+        ["晚餐","魚／瘦肉＋半碗至一碗飯＋蔬菜",510]
+      ],
+      cardio:[
+        ["早餐","全麥吐司＋雞蛋＋無糖豆漿＋水果",410],
+        ["午餐","雞胸／魚＋飯＋蔬菜",520],
+        ["點心","優格、乳清或毛豆",210],
+        ["晚餐","瘦肉／豆腐＋蔬菜＋適量澱粉",470]
+      ],
+      rest:[
+        ["早餐","雞蛋＋燕麥／吐司＋無糖豆漿",390],
+        ["午餐","雞肉／魚＋半碗至一碗飯＋蔬菜",500],
+        ["點心","優格、茶葉蛋或毛豆",190],
+        ["晚餐","魚／豆腐／瘦肉＋蔬菜",450]
+      ]
+    },
+    strength:{
+      strength:[
+        ["早餐","燕麥＋雞蛋 2 顆＋豆漿＋香蕉＋吐司",520],
+        ["午餐","牛肉／雞腿排 180 g＋白飯 1.5 碗＋蔬菜",670],
+        ["練前／練後","香蕉＋乳清＋地瓜",320],
+        ["晚餐","魚／牛肉＋一碗飯＋蔬菜",590]
+      ],
+      cardio:[
+        ["早餐","燕麥＋雞蛋＋豆漿＋水果",450],
+        ["午餐","雞肉／牛肉＋一碗飯＋蔬菜",580],
+        ["點心","乳清＋香蕉或優格",260],
+        ["晚餐","魚／瘦肉＋飯＋蔬菜",510]
+      ],
+      rest:[
+        ["早餐","雞蛋 2 顆＋燕麥＋豆漿",430],
+        ["午餐","雞肉／魚＋一碗飯＋蔬菜",550],
+        ["點心","乳清、優格或毛豆",230],
+        ["晚餐","瘦肉／豆腐＋飯＋蔬菜",490]
+      ]
+    },
+    health:{
+      strength:[
+        ["早餐","全麥吐司＋雞蛋 2 顆＋無糖豆漿＋水果",430],
+        ["午餐","雞肉／魚＋白飯＋兩份蔬菜",540],
+        ["點心","水果＋優格或茶葉蛋",210],
+        ["晚餐","瘦肉／豆腐＋適量澱粉＋蔬菜",500]
+      ],
+      cardio:[
+        ["早餐","雞蛋＋吐司＋無糖豆漿＋水果",400],
+        ["午餐","雞胸／魚＋飯＋蔬菜",500],
+        ["點心","水果、優格或毛豆",190],
+        ["晚餐","魚／豆腐／瘦肉＋蔬菜＋少量澱粉",460]
+      ],
+      rest:[
+        ["早餐","雞蛋＋無糖豆漿＋水果",370],
+        ["午餐","雞肉／魚＋飯＋蔬菜",480],
+        ["點心","優格、茶葉蛋或毛豆",180],
+        ["晚餐","豆腐／魚／瘦肉＋蔬菜",440]
+      ]
+    }
+  };
+  return clone(menus[goal]?.[kind]||menus.recomp[kind]);
+}
+
+function buildGoalMenu(key=dateKey()){
+  const day=ensureDay(key);
+  const kind=menuKind(day);
+  const goal=currentGoalKey();
+  const config=GOAL_MENU_CONFIG[goal];
+  const target=config.targets[kind];
+  const kindNames={strength:"重訓日",cardio:"有氧日",rest:"休息日"};
+
+  return {
+    label:`${config.name}・${kindNames[kind]}菜單`,
+    goal,
+    kind,
+    calories:target.calories,
+    protein:target.protein,
+    meals:goalMenuFoods(goal,kind).map(([name,food,kcal])=>({name,food,kcal}))
+  };
+}
+
+function ensureMenu(key=dateKey()){
+  if(!state.menus[key])state.menus[key]=buildGoalMenu(key);
+  return state.menus[key];
+}
+
+function rebuildFuturePlanAndMenus(startKey=dateKey(),daysAhead=28){
+  Object.keys(state.days).forEach(key=>{
+    if(key>=startKey)delete state.days[key];
+  });
+  Object.keys(state.menus).forEach(key=>{
+    if(key>=startKey)delete state.menus[key];
+  });
+
+  const start=dateFromKey(startKey);
+  for(let offset=0;offset<daysAhead;offset++){
+    const date=new Date(start);
+    date.setDate(start.getDate()+offset);
+    const key=dateKey(date);
+    ensureDay(key);
+    ensureMenu(key);
+  }
+
+  menuPreviewKey=startKey;
+}
+
 function pct(day){let t=0,d=0;day.exercises.forEach(e=>e.sets.forEach(s=>{t++;if(s.done)d++}));return t?Math.round(d/t*100):0}
 function taskPct(day){return day.tasks.length?Math.round(day.tasks.filter(x=>x.done).length/day.tasks.length*100):0}
 function category(day){const n=day.exercises.map(e=>e.name).join(" ");if(/臀|腿|深蹲|RDL|Hip|Leg/.test(n))return"lower";if(/胸|肩|推/.test(n))return"upper";if(/背|拉|划船/.test(n))return"back";if(/有氧|Zone/.test(n))return"cardio";return"full"}
@@ -998,12 +1202,7 @@ function saveWeeklyPlanEdits(){
 
   state.weeklyPlan=updated;
 
-  Object.keys(state.days).forEach(key=>{
-    if(key>=dateKey())delete state.days[key];
-  });
-  Object.keys(state.menus).forEach(key=>{
-    if(key>=dateKey())delete state.menus[key];
-  });
+  rebuildFuturePlanAndMenus(dateKey(),28);
 
   const recommendations=buildPlanRecommendations(updated);
   const box=$("#planRecommendations");
@@ -1017,10 +1216,10 @@ function saveWeeklyPlanEdits(){
   $("#planRecommendationsCard").hidden=false;
   $("#weeklyPlanEditor").hidden=true;
 
-  ensureDay(dateKey());
-  ensureMenu(dateKey());
   save();
-  alert("課表已儲存，未來課表與推薦內容已重新產生。");
+  renderMenuPreview();
+  renderHomeMenuSummary();
+  alert("課表已儲存，未來 28 天課表與菜單已同步重新產生。");
 }
 
 // ===== JianJian v9.2 Exercise Database =====
@@ -1823,22 +2022,15 @@ $("#generatePlanBtn").onclick=()=>{
 
   state.weeklyPlan=buildPlan(goal,days,focus);
 
-  // 清除今天與未來已產生的舊課表，讓新目標立即生效。
-  Object.keys(state.days).forEach(key=>{
-    if(key>=dateKey())delete state.days[key];
-  });
-
-  // 菜單也依新課表重新建立。
-  Object.keys(state.menus).forEach(key=>{
-    if(key>=dateKey())delete state.menus[key];
-  });
-
+  // 同步重建今天與未來 28 天的課表及目標菜單。
+  rebuildFuturePlanAndMenus(dateKey(),28);
   const today=ensureDay(dateKey());
-  ensureMenu(dateKey());
 
   save();
+  renderMenuPreview();
+  renderHomeMenuSummary();
 
-  // 自動回首頁，直接顯示新課表。
+  // 自動回首頁，直接顯示新課表與新熱量目標。
   goToPage("homePage");
 
   alert(`已套用「${state.goal.title}」課表。
