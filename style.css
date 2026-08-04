@@ -370,3 +370,32 @@ main > section.page.active{
   margin:8px 2px 0;
   line-height:1.55;
 }
+
+/* Ultimate Build 1403 — plan settings save */
+.plan-action-grid{
+  display:grid;
+  grid-template-columns:1.35fr 1fr;
+  gap:10px;
+  margin-top:12px;
+}
+.plan-action-grid button{
+  width:100%;
+  min-height:48px;
+  margin:0;
+}
+.plan-save-status{
+  margin:9px 2px 0;
+}
+.plan-save-status.save-success{
+  color:#28734a;
+  font-weight:800;
+}
+.plan-save-status.save-error{
+  color:#a9413c;
+  font-weight:800;
+}
+@media(max-width:560px){
+  .plan-action-grid{
+    grid-template-columns:1fr;
+  }
+}

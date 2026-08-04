@@ -1762,7 +1762,7 @@ function renderMenu(menu){$("#menuTypeText").textContent=menu.label;$("#menuCalo
 function cardioFields(){const t=$("#cardioType").value,v={treadmill:["speed","incline"],elliptical:["resistance","rpm"],bike:["resistance","rpm"],rower:["resistance"],stair:["level"],outdoor:["speed"]}[t];$$("[data-cardio]").forEach(x=>x.style.display=v.includes(x.dataset.cardio)?"block":"none");$("#cardioTip").textContent=t==="treadmill"?"減脂可從速度 4.8–5.8 km/h、坡度 6–12%、30–45 分鐘開始。":t==="elliptical"?"阻力 6–10、RPM 55–70、25–40 分鐘。":"維持可說完整句子的 Zone 2 強度。"}
 function renderCardio(){cardioFields();const list=state.cardio.filter(x=>x.date===dateKey()),b=$("#cardioList");b.innerHTML="";list.slice().reverse().forEach(r=>{const x=document.createElement("article");x.className="cardio-record";const ms=[r.speed&&`速度 ${r.speed}`,r.incline&&`坡度 ${r.incline}%`,r.resistance&&`阻力 ${r.resistance}`,r.rpm&&`RPM ${r.rpm}`,r.level&&`Level ${r.level}`,`${r.minutes} 分鐘`].filter(Boolean);x.innerHTML=`<div class="between"><b>${{treadmill:"跑步機",elliptical:"橢圓機",bike:"飛輪",rower:"划船機",stair:"登階機",outdoor:"戶外"}[r.type]}</b><button class="tiny">刪除</button></div><div class="metrics">${ms.map(m=>`<span class="metric-chip">${m}</span>`).join("")}</div>`;x.querySelector("button").onclick=()=>{state.cardio=state.cardio.filter(z=>z.id!==r.id);save()};b.appendChild(x)});if(!list.length)b.innerHTML='<article class="card muted">今天尚無有氧紀錄。</article>'}
 function renderBody(){$("#bodyTable").innerHTML=state.body.length?state.body.slice().reverse().map(x=>`<tr><td>${x.date}</td><td>${x.fat||"—"}</td><td>${x.weight||"—"}</td><td>${x.waist||"—"}</td><td>${x.hip||"—"}</td></tr>`).join(""):'<tr><td colspan="5">尚無紀錄</td></tr>'}
-function renderProfile(){$("#displayName").value=state.profile.displayName;$("#gender").value=state.profile.gender;$("#weightIncrement").value=state.profile.increment;$("#cycleEnabled").checked=state.profile.cycleEnabled;$("#lastPeriod").value=state.profile.lastPeriod;$("#cycleLength").value=state.profile.cycleLength;$("#periodLength").value=state.profile.periodLength;$("#cycleSettings").hidden=!state.profile.cycleEnabled;$("#symptomBox").innerHTML=symptoms.map(([v,l])=>`<label class="symptom"><input type="checkbox" value="${v}" ${state.profile.symptoms.includes(v)?"checked":""}>${l}</label>`).join("")
+function renderProfile(){$("#displayName").value=state.profile.displayName;$("#gender").value=state.profile.gender;$("#weightIncrement").value=state.profile.increment;$("#cycleEnabled").checked=state.profile.cycleEnabled;$("#lastPeriod").value=state.profile.lastPeriod;$("#cycleLength").value=state.profile.cycleLength;$("#periodLength").value=state.profile.periodLength;$("#cycleSettings").hidden=!state.profile.cycleEnabled;$("#symptomBox").innerHTML=symptoms.map(([v,l])=>`<label class="symptom"><input type="checkbox" value="${v}" ${state.profile.symptoms.includes(v)?"checked":""}>${l}</label>`).join("");if($("#planGoal"))$("#planGoal").value=state.profile.goal||"recomp";if($("#planDays"))$("#planDays").value=String(state.profile.planDays||4);if($("#planFocus"))$("#planFocus").value=state.profile.planFocus||"balanced"
   renderCycleSettingsV9();
   ensureExtendedState();
   if($("#profileProteinTarget"))$("#profileProteinTarget").value=state.profile.proteinTarget;
@@ -2002,6 +2002,26 @@ $("#addCustomSymptomBtn").addEventListener("click", () => {
 });
 $("#saveCycleBtn").addEventListener("click", saveCycleSettingsV9);
 
+
+$("#savePlanSettingsBtn").onclick=()=>{
+  const goal=$("#planGoal").value;
+  const days=Math.max(1,Math.min(7,Number($("#planDays").value)||4));
+  const focus=$("#planFocus").value;
+
+  state.profile.goal=goal;
+  state.profile.planDays=days;
+  state.profile.planFocus=focus;
+
+  save();
+
+  const status=document.getElementById("planSaveStatus");
+  if(status){
+    status.textContent=`已儲存：${new Date().toLocaleString("zh-TW")}`;
+    status.classList.remove("save-error");
+    status.classList.add("save-success");
+  }
+};
+
 $("#generatePlanBtn").onclick=()=>{
   const goal=$("#planGoal").value;
   const days=Number($("#planDays").value)||4;
@@ -2020,6 +2040,9 @@ $("#generatePlanBtn").onclick=()=>{
   state.goal.title=goalMap[goal]?.title||"健康維持";
   state.goal.description=goalMap[goal]?.description||"規律運動";
 
+  state.profile.goal=goal;
+  state.profile.planDays=days;
+  state.profile.planFocus=focus;
   state.weeklyPlan=buildPlan(goal,days,focus);
 
   // 同步重建今天與未來 28 天的課表及目標菜單。

@@ -11,7 +11,7 @@
   <link rel="manifest" href="./manifest.json">
   <link rel="apple-touch-icon" href="./icon-192.png">
   <link rel="icon" href="./icon-192.png">
-  <link rel="stylesheet" href="./style.css?v=1402">
+  <link rel="stylesheet" href="./style.css?v=1403">
   <title>健健健身 JianJian Stable</title>
 </head>
 <body>
@@ -497,7 +497,11 @@
       <article class="card">
         <label>目標<select id="planGoal"><option value="fatloss">減脂</option><option value="muscle">增肌</option><option value="recomp">體態重塑</option><option value="strength">提升力量</option><option value="health">健康維持</option></select></label>
         <div class="grid2"><label>每週天數<select id="planDays"><option>3</option><option selected>4</option><option>5</option><option>6</option></select></label><label>偏好<select id="planFocus"><option value="balanced">均衡</option><option value="glutes">臀腿優先</option><option value="upper">上半身優先</option><option value="cardio">有氧優先</option></select></label></div>
-        <button class="primary full" id="generatePlanBtn">生成並套用</button>
+        <div class="plan-action-grid">
+          <button class="primary" id="generatePlanBtn">生成並套用</button>
+          <button class="soft" id="savePlanSettingsBtn">儲存目前設定</button>
+        </div>
+        <p class="muted plan-save-status" id="planSaveStatus">目前設定尚未另行儲存。</p>
       </article>
 
       <h2>雲端同步</h2>
@@ -569,6 +573,6 @@
 
 <div class="modal" id="modal"><div class="modal-box"><div class="between"><h2 id="modalTitle"></h2><button class="soft" id="closeModalBtn">關閉</button></div><div id="modalContent"></div></div></div>
 
-<script type="module" src="./app.js?v=1402"></script>
+<script type="module" src="./app.js?v=1403"></script>
 </body>
 </html>
