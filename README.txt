@@ -21,3 +21,6 @@ Stable Calorie Progress：
 - 超過目標時進度條及提示改為紅色。
 - 僅修改熱量顯示，不變更登入、好友、訓練或其他架構。
 - app.js / style.css 快取參數為 1172。
+
+
+Custom metrics + GIF guides: removed fixed quick add; added edit/reset; added 6 original GIF guides and proficiency display. Cache 1173.

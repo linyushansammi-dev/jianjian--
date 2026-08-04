@@ -328,3 +328,5 @@ main > section.page.active{
 .calorie-progress-card.calorie-over #calorieStatus{
   color:#a63e38;
 }
+
+.metric-correction-row{display:grid;grid-template-columns:1fr 78px;gap:8px;margin-top:8px}.metric-correction-row button{min-height:40px;margin:0;border-radius:11px;font-weight:900}.edit-metric-btn{background:#dceefb;color:var(--blue)}.reset-metric-btn{background:#fff0ef;color:#a9413c}.exercise-gif-box{min-height:180px;border-radius:16px;overflow:hidden;background:#f3f7fa;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;margin-bottom:14px}.exercise-guide-gif{display:block;width:100%;max-height:340px;object-fit:contain;background:#fff}.gif-fallback{padding:24px;color:var(--muted);text-align:center}.guide-skill{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 12px;border-radius:13px;background:#fff8dc;margin-bottom:14px}.guide-stars{letter-spacing:2px;color:#d79b1f;font-size:18px}

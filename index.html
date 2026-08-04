@@ -11,7 +11,7 @@
   <link rel="manifest" href="./manifest.json">
   <link rel="apple-touch-icon" href="./icon-192.png">
   <link rel="icon" href="./icon-192.png">
-  <link rel="stylesheet" href="./style.css?v=1172?v=stable-1">
+  <link rel="stylesheet" href="./style.css?v=1173?v=stable-1">
   <title>健健健身 JianJian Stable</title>
 </head>
 <body>
@@ -87,7 +87,7 @@
             <input id="waterCustomInput" type="number" min="1" inputmode="decimal" placeholder="輸入 ml">
             <button class="soft add-custom-metric" data-input-id="waterCustomInput" data-metric-name="water">加入</button>
           </div>
-          <button class="quick-add-full" data-metric="water" data-add="250">快速＋250 ml</button>
+          <div class="metric-correction-row"><button class="edit-metric-btn" data-edit-metric="water" data-unit="ml">✎ 修改目前數值</button><button class="reset-metric-btn" data-reset-metric="water">歸零</button></div>
         </article>
 
         <article class="card daily-goal-card">
@@ -100,7 +100,7 @@
             <input id="proteinCustomInput" type="number" min="1" inputmode="decimal" placeholder="輸入 g">
             <button class="soft add-custom-metric" data-input-id="proteinCustomInput" data-metric-name="protein">加入</button>
           </div>
-          <button class="quick-add-full" data-metric="protein" data-add="10">快速＋10 g</button>
+          <div class="metric-correction-row"><button class="edit-metric-btn" data-edit-metric="protein" data-unit="g">✎ 修改目前數值</button><button class="reset-metric-btn" data-reset-metric="protein">歸零</button></div>
         </article>
 
         <article class="card daily-goal-card">
@@ -113,7 +113,7 @@
             <input id="stepsCustomInput" type="number" min="1" inputmode="numeric" placeholder="輸入步數">
             <button class="soft add-custom-metric" data-input-id="stepsCustomInput" data-metric-name="steps">加入</button>
           </div>
-          <button class="quick-add-full" data-metric="steps" data-add="1000">快速＋1000 步</button>
+          <div class="metric-correction-row"><button class="edit-metric-btn" data-edit-metric="steps" data-unit="步">✎ 修改目前數值</button><button class="reset-metric-btn" data-reset-metric="steps">歸零</button></div>
         </article>
 
         <article class="card daily-goal-card">
@@ -126,6 +126,7 @@
             <input id="sleepCustomInput" type="number" min="0" max="24" step="0.5" inputmode="decimal" placeholder="輸入小時">
             <button class="soft" id="setSleepBtn">儲存</button>
           </div>
+          <div class="metric-correction-row"><button class="edit-metric-btn" data-edit-metric="sleep" data-unit="小時">✎ 修改目前數值</button><button class="reset-metric-btn" data-reset-metric="sleep">歸零</button></div>
         </article>
       </div>
 

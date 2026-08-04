@@ -1071,13 +1071,43 @@ function weightText(data){
   </div>`;
 }
 
+
+const EXERCISE_GUIDE_GIFS={
+  hip_thrust:"assets/gif/hip-thrust.gif",
+  squat:"assets/gif/squat.gif",
+  deadlift:"assets/gif/deadlift.gif",
+  bench_press:"assets/gif/bench-press.gif",
+  lat_pulldown:"assets/gif/lat-pulldown.gif",
+  seated_row:"assets/gif/row.gif"
+};
+function exerciseGuideGif(id,data){
+  if(EXERCISE_GUIDE_GIFS[id])return EXERCISE_GUIDE_GIFS[id];
+  const name=String(data?.name||"");
+  if(name.includes("臀推"))return EXERCISE_GUIDE_GIFS.hip_thrust;
+  if(name.includes("深蹲"))return EXERCISE_GUIDE_GIFS.squat;
+  if(name.includes("硬舉"))return EXERCISE_GUIDE_GIFS.deadlift;
+  if(name.includes("臥推"))return EXERCISE_GUIDE_GIFS.bench_press;
+  if(name.includes("下拉"))return EXERCISE_GUIDE_GIFS.lat_pulldown;
+  if(name.includes("划船"))return EXERCISE_GUIDE_GIFS.seated_row;
+  return "";
+}
+function exercisePracticeCount(name){return Array.isArray(state.history?.[name])?state.history[name].length:0;}
+function exerciseSkill(name){const n=exercisePracticeCount(name);return n>=20?[5,"非常熟練"]:n>=12?[4,"熟練"]:n>=6?[3,"逐漸熟悉"]:n>=2?[2,"練習中"]:[1,"剛開始"];}
+
 function showExerciseGuideByData(data, exercise=null){
   if(!data){
     openModal(exercise?.name || "動作教學", `<p>此動作尚未建立專屬教學。請先使用可以保留 2～3 下餘力、且姿勢穩定的重量。</p>`);
     return;
   }
   const id = exerciseIdForData(data);
+  const gif=exerciseGuideGif(id,data);
+  const [skillStars,skillLabel]=exerciseSkill(data.name);
   openModal(data.name, `
+    <div class="exercise-gif-box">
+      ${gif?`<img class="exercise-guide-gif" src="${gif}" alt="${escapeHtml(data.name)} 動作示範" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='block';">`:""}
+      <div class="gif-fallback" style="${gif?'display:none':''}">此動作目前尚未加入 GIF 示範。</div>
+    </div>
+    <div class="guide-skill"><span class="guide-stars">${"★".repeat(skillStars)}${"☆".repeat(5-skillStars)}</span><b>${skillLabel}</b><span class="muted">完成紀錄 ${exercisePracticeCount(data.name)} 次</span></div>
     <div class="guide-hero">
       <div><span class="tag">${escapeHtml(data.category)}</span> <span class="tag">${escapeHtml(data.level)}</span></div>
       <p class="muted">器材：${escapeHtml(data.equipment)}</p>
@@ -1612,6 +1642,29 @@ $("#setSleepBtn").onclick=()=>{
   input.value="";
   save();
 };
+
+$$(`[data-edit-metric]`).forEach(button=>{
+  button.onclick=()=>{
+    const metric=button.dataset.editMetric;
+    const unit=button.dataset.unit||"";
+    const metrics=todayMetrics();
+    const current=Number(metrics[metric])||0;
+    const value=prompt(`請輸入正確的目前總數（${unit}）`,String(current));
+    if(value===null)return;
+    const number=Number(value);
+    if(!Number.isFinite(number)||number<0)return alert("請輸入 0 以上的數字。");
+    metrics[metric]=number;
+    save();
+  };
+});
+
+$$(`[data-reset-metric]`).forEach(button=>{
+  button.onclick=()=>{
+    if(!confirm("確定將今天這項數值歸零嗎？"))return;
+    todayMetrics()[button.dataset.resetMetric]=0;
+    save();
+  };
+});
 
 $$("[data-metric]").forEach(button=>button.onclick=()=>{
   const metric=button.dataset.metric;
