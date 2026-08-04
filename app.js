@@ -38,7 +38,7 @@ const firebaseConfig={
   messagingSenderId:"461851112399",
   appId:"1:461851112399:web:26c86accb78b0e690e58ba"
 };
-const APP_VERSION="8.0.0";
+const APP_VERSION="stable-sprint1";
 
 const clone=x=>JSON.parse(JSON.stringify(x));
 const dateKey=(d=new Date())=>{
@@ -1140,7 +1140,7 @@ function renderExerciseLibrary(){
   search.value=exerciseLibrarySearch;
   catBox.querySelectorAll("[data-category]").forEach(btn=>btn.onclick=()=>{exerciseLibraryFilter=btn.dataset.category;renderExerciseLibrary();});
   const q=exerciseLibrarySearch.trim().toLowerCase();
-  const items=Object.entries(EXERCISE_DB).filter(([,d])=>{
+  const items=Object.entries(EXERCISE_DB).filter(([id,d])=>{
     const categoryOk=exerciseLibraryFilter==="全部"||d.category===exerciseLibraryFilter;
     const favoriteOk=!favoritesOnly||state.profile.favoriteExercises.includes(id);
     const searchOk=!q||[d.name,d.category,d.equipment,...d.primary,...d.secondary,...d.alternatives].join(" ").toLowerCase().includes(q);

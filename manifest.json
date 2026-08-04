@@ -1,7 +1,7 @@
 {
-  "name": "健健健身 JianJian Stable",
+  "name": "健健健身 JianJian Stable Sprint 1",
   "short_name": "JianJian",
-  "start_url": "./?stable=1",
+  "start_url": "./?build=sprint1-1",
   "display": "standalone",
   "background_color": "#eaf7ff",
   "theme_color": "#dff2ff",
