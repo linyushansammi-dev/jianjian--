@@ -24,3 +24,24 @@ Stable Calorie Progress：
 
 
 Custom metrics + GIF guides: removed fixed quick add; added edit/reset; added 6 original GIF guides and proficiency display. Cache 1173.
+
+
+JianJian Ultimate — Build 1401
+
+本次只做低風險基礎整理：
+
+1. 修正動作庫「只看收藏」使用未定義 id 的錯誤。
+2. 修正 style.css 快取網址含有兩個 ?v= 的問題。
+3. 所有動作要點加入：
+   - YouTube 中文教學
+   - YouTube 完整示範
+4. 連結依動作名稱自動搜尋，因此內建與自訂動作都可使用。
+5. 有 GIF 的動作顯示 GIF＋YouTube。
+6. 沒有 GIF 的動作顯示備援提示＋YouTube。
+7. 不修改 Google 登入、Firebase、好友、菜單、訓練與生理週期資料結構。
+
+部署後請測試：
+- 首頁是否正常載入
+- 動作庫搜尋及只看收藏
+- 任一動作 → 查看教學 → YouTube 兩個按鈕
+- GIF 有無時皆能正常顯示

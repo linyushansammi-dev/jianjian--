@@ -1,9 +1,11 @@
 {
-  "name": "JianJian Stable",
-  "base": "v11.7 Runtime Fixed",
-  "change_scope": [
-    "menu save only"
+  "product": "JianJian Ultimate",
+  "build": 1401,
+  "base": "user-uploaded stable GIF guide edition",
+  "changes": [
+    "fix favorite exercise filter undefined id",
+    "fix stylesheet cache query",
+    "add universal YouTube guide search links"
   ],
-  "firestore_menu_format": "{json: JSON.stringify(menu)}",
-  "service_worker": "unregister and clear old caches"
+  "data_schema_changed": false
 }

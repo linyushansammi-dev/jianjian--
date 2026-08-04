@@ -38,7 +38,7 @@ const firebaseConfig={
   messagingSenderId:"461851112399",
   appId:"1:461851112399:web:26c86accb78b0e690e58ba"
 };
-const APP_VERSION="stable-sprint1";
+const APP_VERSION="8.0.0";
 
 const clone=x=>JSON.parse(JSON.stringify(x));
 const dateKey=(d=new Date())=>{
@@ -1094,6 +1094,23 @@ function exerciseGuideGif(id,data){
 function exercisePracticeCount(name){return Array.isArray(state.history?.[name])?state.history[name].length:0;}
 function exerciseSkill(name){const n=exercisePracticeCount(name);return n>=20?[5,"非常熟練"]:n>=12?[4,"熟練"]:n>=6?[3,"逐漸熟悉"]:n>=2?[2,"練習中"]:[1,"剛開始"];}
 
+
+function exerciseYoutubeLinks(data){
+  const name=String(data?.name||"健身動作").trim();
+  const equipment=String(data?.equipment||"").trim();
+
+  return [
+    {
+      label:"YouTube 中文教學",
+      url:`https://www.youtube.com/results?search_query=${encodeURIComponent(`${name} ${equipment} 正確姿勢 健身教學`)}`
+    },
+    {
+      label:"YouTube 完整示範",
+      url:`https://www.youtube.com/results?search_query=${encodeURIComponent(`${name} exercise tutorial proper form`)}`
+    }
+  ];
+}
+
 function showExerciseGuideByData(data, exercise=null){
   if(!data){
     openModal(exercise?.name || "動作教學", `<p>此動作尚未建立專屬教學。請先使用可以保留 2～3 下餘力、且姿勢穩定的重量。</p>`);
@@ -1120,6 +1137,20 @@ function showExerciseGuideByData(data, exercise=null){
     <div class="guide-section"><h3>暖身建議</h3><ul class="guide-list">${data.warmup.map(x=>`<li>${escapeHtml(x)}</li>`).join("")}</ul></div>
     <div class="guide-section"><h3>練後拉伸</h3><ul class="guide-list">${data.stretch.map(x=>`<li>${escapeHtml(x)}</li>`).join("")}</ul></div>
     <div class="guide-section"><h3>重量參考</h3>${weightText(data)}<p class="muted">重量僅作起始參考，以動作品質、器材差異與保留次數為準。</p></div>
+    <div class="guide-section">
+      <h3>YouTube 教學</h3>
+      <div class="youtube-guide-links">
+        ${exerciseYoutubeLinks(data).map(item=>`
+          <a class="youtube-guide-btn"
+             href="${item.url}"
+             target="_blank"
+             rel="noopener noreferrer">
+            ▶ ${escapeHtml(item.label)}
+          </a>
+        `).join("")}
+      </div>
+      <p class="muted youtube-guide-note">依目前動作名稱開啟 YouTube 搜尋；不會上傳個人資料。</p>
+    </div>
     <div class="guide-section"><h3>替代動作</h3><div class="alternatives">${data.alternatives.map(x=>`<button class="alt guide-alt" data-guide-alt="${escapeHtml(x)}">${escapeHtml(x)}</button>`).join("")}</div></div>
     ${id ? `<button class="primary full" id="addGuideExerciseBtn">加入今日課表</button>` : ""}
   `);
